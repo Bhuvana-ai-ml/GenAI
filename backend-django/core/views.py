@@ -7,13 +7,11 @@ from core.prompt import build_prompt
 from core.ai_client import call_ai
 
 
-# ✅ Health check endpoint (PUBLIC)
 @api_view(["GET"])
 def health(request):
     return Response({"status": "Backend running"})
 
 
-# 🔐 Protected AI generation endpoint
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
 def generate(request):

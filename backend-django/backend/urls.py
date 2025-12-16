@@ -1,19 +1,10 @@
-from django.contrib import admin
 from django.urls import path
-from rest_framework.response import Response
-from rest_framework.decorators import api_view
-
 from core.auth_views import login, register
-from core.views import generate
-
-
-@api_view(["GET"])
-def health(request):
-    return Response({"status": "Backend running"})
-
+from core.views import generate, health
 
 urlpatterns = [
-    path("", health),          # 👈 THIS FIXES 405
+    path("", health),          # 👈 root URL (fixes 405 on Render)
+    path("health/", health),
     path("register/", register),
     path("login/", login),
     path("generate/", generate),
