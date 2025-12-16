@@ -72,7 +72,10 @@ TIME_ZONE = "UTC"
 STATIC_URL = "/static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOWED_ORIGINS = [
+    "https://gen-ai-kohl-xi.vercel.app",
+]
+
 CORS_ALLOW_METHODS = [
     "DELETE",
     "GET",
@@ -85,10 +88,14 @@ CORS_ALLOW_METHODS = [
 from datetime import timedelta
 
 REST_FRAMEWORK = {
-    "DEFAULT_AUTHENTICATION_CLASSES": (
-        "rest_framework_simplejwt.authentication.JWTAuthentication",
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
 }
+
+from django.conf import settings
+SECRET_KEY = settings.SECRET_KEY
+
 
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
