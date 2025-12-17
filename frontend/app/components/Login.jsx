@@ -2,24 +2,29 @@
 
 import { useState } from "react";
 
-export default function Login({ setToken }) {
+
+
+
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "https://genai-582w.onrender.com";
+
+export default function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  console.log("API BASE:", API_BASE);
 
-  async function handleLogin() {
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setError("");
+
     try {
-      const res = await fetch(
-  `${process.env.NEXT_PUBLIC_API_URL}/login/`,
-  {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ username, password }),
-  }
-);
-
+      const res = await fetch(`${API_BASE}/login/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ username, password }),
+      });
 
       const data = await res.json();
 
@@ -28,47 +33,42 @@ export default function Login({ setToken }) {
         return;
       }
 
-      // ✅ Store JWT access token
-      localStorage.setItem("token", data.access);
-      setToken(data.access);
+      // ✅ Save tokens
+      localStorage.setItem("access", data.access);
+      localStorage.setItem("refresh", data.refresh);
+
+      console.log("Login success", data);
+
+      // Optional: redirect
+      // window.location.href = "/";
     } catch (err) {
-      setError("Unable to connect to server");
+      setError("Server error");
     }
-  }
+  };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-900">
-      <div className="bg-gray-800 p-6 rounded-xl w-80">
-        <h2 className="text-xl font-semibold mb-4 text-white">
-          Login
-        </h2>
+    <form onSubmit={handleLogin} className="space-y-4">
+      <input
+        type="text"
+        placeholder="Username"
+        value={username}
+        onChange={(e) => setUsername(e.target.value)}
+        className="border p-2 w-full"
+      />
 
-        {error && (
-          <p className="text-red-400 text-sm mb-2">{error}</p>
-        )}
+      <input
+        type="password"
+        placeholder="Password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        className="border p-2 w-full"
+      />
 
-        <input
-          className="w-full mb-2 p-2 rounded text-black"
-          placeholder="Username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-        />
+      {error && <p className="text-red-500">{error}</p>}
 
-        <input
-          type="password"
-          className="w-full mb-4 p-2 rounded text-black"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-
-        <button
-          onClick={handleLogin}
-          className="w-full bg-blue-600 text-white py-2 rounded"
-        >
-          Login
-        </button>
-      </div>
-    </div>
+      <button type="submit" className="bg-blue-600 text-white px-4 py-2">
+        Login
+      </button>
+    </form>
   );
 }
